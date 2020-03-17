@@ -38,20 +38,17 @@ app.post('/chat', function (req, res) {
     res.send('Il fait beau')
   } else {
     if (/ = /.test(req.body.msg)) {
-      // const [ cle, valeur ] = req.body.msg.split(' = ')
-      const parties = req.body.msg.split(' = ')
-      const cle = parties[0]
-      const valeur = parties[1]
-      // const objet = { [cle]: valeur }
-      const objet = {}
-      objet[cle] = valeur
-      fs.writeFileSync('reponses.json', JSON.stringify(objet))
-      res.send("Merci pour cette information");
+      const [ cle, valeur ] = req.body.msg.split(' = ')
+      const valeursExistantes = readValuesFromFile();
+      fs.writeFileSync('réponses.json', JSON.stringify({
+        ...valeursExistantes,
+        [cle]: valeur
+      }))
+      res.send('Merci pour cette information !')
     } else {
       const cle = req.body.msg
-      const reponses = fs.readFileSync('reponses.json', { encoding: 'utf8' })
-      const reponse = JSON.parse(reponses)[cle]
-      res.send(cle +": "+reponse)
+      const reponse = readValuesFromFile()[cle]
+      res.send(cle + ': ' + reponse)
     }
   }
 })
