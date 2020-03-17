@@ -45,13 +45,13 @@ app.post('/chat', function (req, res) {
       // const objet = { [cle]: valeur }
       const objet = {}
       objet[cle] = valeur
-      fs.writeFileSync('réponses.json', JSON.stringify(objet))
+      fs.writeFileSync('reponses.json', JSON.stringify(objet))
+      res.send("Merci pour cette information");
     } else {
       const cle = req.body.msg
-      const reponses = fs.readFileSync('réponses.json', { encoding: 'utf8' })
+      const reponses = fs.readFileSync('reponses.json', { encoding: 'utf8' })
       const reponse = JSON.parse(reponses)[cle]
-      console.log('réponses:', JSON.parse(reponses)[cle])
-      res.send(reponse)
+      res.send(cle +": "+reponse)
     }
   }
 })
