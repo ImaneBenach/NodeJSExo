@@ -1,7 +1,7 @@
 Description de l'exercice :
 Le but est de développer un serveur Web/API basique qui répondra systématiquement “Hello World” à toutes les requêtes HTTP GET émises par des clients au chemin / (racine). Nous allons pour cela utiliser la bibliothèque Express.js.
 
-NODE.JS API:
+NODE.JS API:\n
 Ce dépot contient un serveur web / API en NODE.JS.
 Ce serveur répond "Hello World" quand on envoie une requête HTTP GET à la racine.
 
