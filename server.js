@@ -8,7 +8,7 @@ const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 3000 ; 
 
 // MongoDB
-const uri = "mongodb+srv://Imane:<password>@cluster0-vsxwe.azure.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb+srv://Test:Sohan12@cluster-huy2l.azure.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect(err => {
   const collection = client.db("test").collection("devices");
@@ -80,22 +80,6 @@ app.post('/chat', function (req, res) {
     }
   }
 })
-
-/*
-app.post('/chat', function(req, res){
-  if(msg != "" ){
-      switch(msg){
-          case "ville":
-              res.send("Nous sommes à Paris")
-              break
-          case "météo":
-              res.send("Il fait beau")
-              break
-      }
-  }
-});
-*/
-
 
 app.listen(3000, function () {
   console.log('Listening on port 3000! :)')
