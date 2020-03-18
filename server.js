@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000 ;
   } catch (err) {
     console.log(err.stack);
   }
- console.log("ok");
+ console.log("success");
  client.close();
 })();
 
@@ -76,13 +76,22 @@ app.post('/chat', async function (req, res) {
   }
 })
 
-// PARTIE 2 : Exercice 2
+// PARTIE 2 : Exercice 2.2
 app.get('/messages/all', function (req, res) {
   const db = client.db(dbName);
   const col = db.collection("messages");
   col.find().toArray(function(err, docs) {
       return res.json(docs);
   });
+})
+
+// PARTIE 2 : Exercice 2.4
+app.get('/messages/last', function (req, res) {
+  const db = client.db(dbName);
+  const col = db.collection("messages");
+
+  col.deleteOne() ;
+
 })
 
 app.listen(3000, function () {
