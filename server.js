@@ -9,13 +9,13 @@ const PORT = process.env.PORT || 3000 ;
 
 // MongoDB
 const uri = "mongodb+srv://Test:Sohan12@cluster-huy2l.azure.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
+const client = new MongoClient(uri, { useUnifiedTopology: true } ,{ useNewUrlParser: true });
+console.log("connected")
 client.connect(err => {
   const collection = client.db("test").collection("devices");
   // perform actions on the collection object
   client.close();
 });
-
 
 //Exercice 1
 app.get('/', function (req, res) {
