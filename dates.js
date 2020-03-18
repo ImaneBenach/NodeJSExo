@@ -1,10 +1,10 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const url = 'mongodb://localhost:27017/date';
+const dbName = 'date';
 
 (async function() {
 
-    const url = 'mongodb://localhost:27017/date';
-    const dbName = 'date';
     const client = new MongoClient(url);
   
     try {
