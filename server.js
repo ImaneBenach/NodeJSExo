@@ -3,9 +3,19 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 const fs = require('fs')
-
+const MongoClient = require('mongodb').MongoClient;
 
 const PORT = process.env.PORT || 3000 ; 
+
+// MongoDB
+const uri = "mongodb+srv://Imane:<password>@cluster0-vsxwe.azure.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
 
 //Exercice 1
 app.get('/', function (req, res) {
@@ -39,16 +49,34 @@ app.post('/chat', function (req, res) {
   } else {
     if (/ = /.test(req.body.msg)) {
       const [ cle, valeur ] = req.body.msg.split(' = ')
-      const valeursExistantes = readValuesFromFile();
-      fs.writeFileSync('réponses.json', JSON.stringify({
-        ...valeursExistantes,
-        [cle]: valeur
-      }))
-      res.send('Merci pour cette information !')
+      readValuesFromFile()
+        .catch(err => {
+          res.send('error while reading réponses.json', err)
+        })
+        .then(valeursExistantes => {
+          const data = JSON.stringify({
+            ...valeursExistantes,
+            [cle]: valeur
+          })
+          return writeFile('réponses.json', data)
+        })
+        .then(() => {
+          res.send('Merci pour cette information !')
+        })
+        .catch((err) => {
+          console.error('error while saving réponses.json', err)
+          res.send('Il y a eu une erreur lors de l\'enregistrement')
+        })
     } else {
       const cle = req.body.msg
-      const reponse = readValuesFromFile()[cle]
-      res.send(cle + ': ' + reponse)
+      readValuesFromFile()
+        .then((values) => {
+          const reponse = values[cle]
+          res.send(cle + ': ' + reponse)
+        })
+        .catch((err) => {
+          res.send('error while reading réponses.json', err)
+        })
     }
   }
 })
@@ -72,3 +100,8 @@ app.post('/chat', function(req, res){
 app.listen(3000, function () {
   console.log('Listening on port 3000! :)')
 })
+
+function readValuesFromFile() {
+  return readFile('réponses.json', { encoding: 'utf8' })
+    .then(reponses => JSON.parse(reponses))
+}
