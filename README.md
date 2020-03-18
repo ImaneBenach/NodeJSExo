@@ -27,13 +27,13 @@ $ curl http://localhost:3000/ #retourne bien le texte “Hello World”.
 $ curl http://localhost:3000/hello?nom=Sasha #répondra Bonjour, Sasha !
 $ curl http://localhost:3000/hello?nom=Michel #répondra Bonjour, Michel !
 $ curl http://localhost:3000/hello #répondra Quel est votre nom ?
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"ville\"}" http://localhost:3000/chat #répondra “Nous sommes à Paris."
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"météo\"}" http://localhost:3000/chat #répondra “Il fait beau”.
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain\"}" http://localhost:3000/chat #répondra “Je ne connais pas demain…”
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain = Mercredi\"}" http://localhost:3000/chat #répondra “Merci pour cette information !”
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain\"}" http://localhost:3000/chat #répondra “demain: Mercredi” (y compris après redémarrage du serveur)
-$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"ville\"}" http://localhost:3000/chat #répondra “Nous sommes à Paris” (comme dans le dernier exercice de la partie précédente)
-$ curl -X GET http://localhost:3000/messages/all #affichera l’historique des conversations (messages de l’utilisateur et réponses du chat-bot), tel que décrit ci-dessous, y compris après redémarrage du serveur
-$ curl -X DELETE http://localhost:3000/messages/last #supprimera le dernier échange de l’historique (message de l’utilisateur + réponse du chat-bot)
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"ville\"}" http://localhost:3000/chat # Répondra “Nous sommes à Paris."
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"météo\"}" http://localhost:3000/chat # Répondra “Il fait beau”.
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain\"}" http://localhost:3000/chat # Répondra “Je ne connais pas demain…”
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain = Mercredi\"}" http://localhost:3000/chat # Répondra “Merci pour cette information !”
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"demain\"}" http://localhost:3000/chat # Répondra “demain: Mercredi” (y compris après redémarrage du serveur)
+$ curl -X POST --header "Content-Type: application/json" --data "{\"msg\":\"ville\"}" http://localhost:3000/chat # Répondra “Nous sommes à Paris” (comme dans le dernier exercice de la partie précédente)
+$ curl -X GET http://localhost:3000/messages/all # Affichera l’historique des conversations (messages de l’utilisateur et réponses du chat-bot), tel que décrit ci-dessous, y compris après redémarrage du serveur
+$ curl -X DELETE http://localhost:3000/messages/last # Supprimera le dernier échange de l’historique (message de l’utilisateur + réponse du chat-bot)
 
 ```
