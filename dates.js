@@ -21,6 +21,7 @@ const dbName = 'date';
         const doc = await cursor.next();
         console.dir(doc);
       }
+      console.log("ok");
 
     } catch (err) {
       console.log(err.stack);
