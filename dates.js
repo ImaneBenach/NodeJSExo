@@ -5,7 +5,7 @@ const dbName = 'date';
 
 (async function() {
 
-    const client = new MongoClient(url);
+    const client = new MongoClient(url, { useUnifiedTopology: true } ) ;
   
     try {
       await client.connect();
