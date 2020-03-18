@@ -1,8 +1,8 @@
 
-const express = require('express')
-const app = express()
-app.use(express.json())
-const fs = require('fs')
+const express = require('express');
+const app = express();
+app.use(express.json());
+const fs = require('fs');
 const assert = require('assert');
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017/chat-bot';
@@ -17,21 +17,22 @@ const PORT = process.env.PORT || 3000 ;
   } catch (err) {
     console.log(err.stack);
   }
-  client.close();
+ console.log("ok");
+ client.close();
 })();
 
 //Exercice 1
 app.get('/', function (req, res) {
-  res.send('Hello World!')
+  res.send('Hello World!');
 })
 
 // Exercice 3
 app.get('/hello', function(req, res){
   const nom = req.query.nom
   if(nom) {
-    res.send("Bonjour, " + nom + " !")
+    res.send("Bonjour, " + nom + " !");
   } else {
-    res.send("Quel est votre nom ?")
+    res.send("Quel est votre nom ?");
   }
 })
 
@@ -77,15 +78,15 @@ app.post('/chat', async function (req, res) {
 
 // PARTIE 2 : Exercice 2
 app.get('/messages/all', function (req, res) {
-  const db = client.db(dbName)
-  const col = db.collection('messages')
+  const db = client.db(dbName);
+  const col = db.collection("messages");
   col.find().toArray(function(err, docs) {
       return res.json(docs);
   });
 })
 
 app.listen(3000, function () {
-  console.log('Listening on port 3000! :)')
+  console.log("Listening on port 3000! :)");
 })
 
 async function readValuesFromFile() {
