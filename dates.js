@@ -1,31 +1,15 @@
 const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const url = 'mongodb://localhost:27017/date';
-const dbName = 'date';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const client = new MongoClient(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-(async function() {
+(async () => {
+  await client.connect();
+  const collection = client.db("test").collection("dates");
+  // affiche la liste des documents de la collection dates dans la sortie standard
+  const dates = await collection.find({}).toArray();
+  console.log('dates:', dates)
 
-    const client = new MongoClient(url, { useUnifiedTopology: true } ) ;
-  
-    try {
-      await client.connect();
-      console.log("connected correctly");
-      const db = client.db(dbName);
-      const col = db.collection("dates");
-      r = await db.collection('dates').insertOne({date: new Date()}); 
-      assert.equal(1, r.insertedCount);
-      console.log("successful");
-      
-      const cursor = col.find();
-      while(await cursor.hasNext()) {
-        const doc = await cursor.next();
-        console.dir(doc);
-      }
-      console.log("ok");
+  await collection.insertOne({ date: new Date() });
 
-    } catch (err) {
-      console.log(err.stack);
-    }
-  
-    client.close();
-  })();
+  await client.close();
+})();
