@@ -1,47 +1,45 @@
-
-const express = require('express');
+const fs = require('fs')
+const util = require('util')
+const express = require('express')
 const app = express();
-app.use(express.json());
-const fs = require('fs');
-const assert = require('assert');
+app.use(express.json()) 
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017/chat-bot';
-const dbName = 'chat-bot';
-const PORT = process.env.PORT || 3000 ; 
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const DATABASE_NAME = 'chat-bot';
+const COLLECTION_NAME = 'messages';
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
+let collection;
 
-(async function() {
-  const client = new MongoClient(url, { useUnifiedTopology: true } );
-  try {
-    await client.connect();
-    console.log("connected correctly");
-  } catch (err) {
-    console.log(err.stack);
-  }
- console.log("success");
- client.close();
-})();
-
-//Exercice 1
+// Partie 1 : Exo 1
 app.get('/', function (req, res) {
-  res.send('Hello World!');
+  res.send('Hello World!')
 })
 
-// Exercice 3
-app.get('/hello', function(req, res){
+// Partie 1 : Exo 3
+app.get('/hello', function (req, res) {
   const nom = req.query.nom
-  if(nom) {
-    res.send("Bonjour, " + nom + " !");
+  if (nom) {
+    res.send('Bonjour, ' + nom + ' !')
   } else {
-    res.send("Quel est votre nom ?");
+    res.send('Quel est votre nom ?')
   }
 })
 
-// Exercice 4 + 5
+// Partie 1 : Exo 4+5
 app.post('/chat', async function (req, res) {
+
+  async function sendReply(reply) {
+    await collection.insertOne({ from: 'user', msg: req.body.msg })
+    await collection.insertOne({ from: 'bot', msg: reply })
+    res.send(reply)
+  }
+
   if (req.body.msg === 'ville') {
-    res.send('Nous sommes à Paris')
+    sendReply('Nous sommes à Paris')
   } else if (req.body.msg === 'météo') {
-    res.send('Il fait beau')
+    sendReply('Il fait beau')
   } else {
     if (/ = /.test(req.body.msg)) {
       const [ cle, valeur ] = req.body.msg.split(' = ')
@@ -49,7 +47,7 @@ app.post('/chat', async function (req, res) {
       try {
         valeursExistantes = await readValuesFromFile();
       } catch (err) {
-        res.send('error while reading réponses.json', err)
+        sendReply('error while reading réponses.json', err)
         return
       }
       const data = JSON.stringify({
@@ -58,25 +56,44 @@ app.post('/chat', async function (req, res) {
       })
       try {
         await writeFile('réponses.json', data)
-        res.send('Merci pour cette information !')
+        sendReply('Merci pour cette information !')
       } catch (err) {
         console.error('error while saving réponses.json', err)
-        res.send('Il y a eu une erreur lors de l\'enregistrement')
+        sendReply('Il y a eu une erreur lors de l\'enregistrement')
       }
     } else {
       const cle = req.body.msg
       try {
         const values = await readValuesFromFile()
         const reponse = values[cle]
-        res.send(cle + ': ' + reponse)
+        sendReply(cle + ': ' + reponse)
       } catch (err) {
-        res.send('error while reading réponses.json', err)
+        sendReply('error while reading réponses.json', err)
       }
     }
   }
 })
 
-// PARTIE 2 : Exercice 2.2
+// Database
+;(async () => {
+  console.log(`Connecting to ${DATABASE_NAME}...`)
+  const client = new MongoClient(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  await client.connect()
+  collection = client.db(DATABASE_NAME).collection(COLLECTION_NAME)
+  console.log(`Successfully connected to ${DATABASE_NAME}`)
+  app.listen(PORT, function () {
+    console.log('Example app listening on port ' + PORT)
+  })
+  // await client.close() 
+})()
+
+// Partie 2 : Exo 2 
+app.get('/messages/all', async function (req, res) {
+  const messages = await collection.find({}).toArray();
+  res.send(messages)
+})
+
+/*
 app.get('/messages/all', function (req, res) {
   const db = client.db(dbName);
   const col = db.collection("messages");
@@ -84,21 +101,23 @@ app.get('/messages/all', function (req, res) {
       return res.json(docs);
   });
 })
+*/
 
-// PARTIE 2 : Exercice 2.4
-app.get('/messages/last', function (req, res) {
-  const db = client.db(dbName);
-  const col = db.collection("messages");
-
-  col.deleteOne() ;
-
+// Partie 2 : Exo 2
+app.delete('/messages/last', async function (req, res) {
+  const lastTwoDocuments = await collection.find({}).sort({ _id: -1 }).limit(2).toArray()
+  const [ botReply, userMsg ] = lastTwoDocuments
+  await collection.deleteOne(userMsg)
+  await collection.deleteOne(botReply)
+  res.send('ok')
 })
 
-app.listen(3000, function () {
-  console.log("Listening on port 3000! :)");
-})
-
+// json
 async function readValuesFromFile() {
   const reponses = await readFile('réponses.json', { encoding: 'utf8' })
   return JSON.parse(reponses)
 }
+
+app.listen(3000, function () {
+  console.log("Listening on port 3000! :)");
+})
